@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: moruku36/ai-engineering-factory
-          ref: 9801916712af1c1f56fe04a0dcf1ef4e280f6f1a
+          ref: 31ad9d3b9289410bdff04e6ddbcaf5a9820f2da1
           path: factory
           persist-credentials: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
