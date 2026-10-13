@@ -2,102 +2,49 @@
 
 [English](README.md) | [日本語](README.ja.md)
 
-A personal Gradio chat application with Qwen chat/vision and image generation/editing, web search, read-only GitHub research, PDFs, short videos, speech input, and optional readout. It requires an NVIDIA A100 (80GB recommended) with Qwen3.8-27B Q8_K_L; L4 and A100 40GB are not supported at the moment. That quantization change still needs GPU measurement.
+**An experimental lab for running, connecting, and comparing open-weight AI models** across multimodal tasks, code review, and defensive security evaluation. Started as a Qwen-based Gradio app; now expanding to GLM and other models with on-demand RunPod inference. **This is a research project, not a production-ready hosted service.**
 
+## Progress at a glance
 
-> **Project scope update (2026-10-13):** this project is expanding beyond Qwen to evaluate multiple open-weight LLMs. The GitHub URL slug is still `qwen-multimodal` pending an administrative rename. The existing Qwen code and notebooks are preserved.
+| Phase | Goal | What was achieved | Status / evidence |
+| --- | --- | --- | --- |
+| **1 — Connectivity** | Connect a remote GPU model to Open WebUI | On **2026-10-09**, a Qwen2.5-1.5B-Instruct model on a RunPod RTX PRO 4000 (24GB) returned `Connected successfully.` through authenticated HTTPS; the test Pod was deleted afterwards. | **Verified minimal smoke test** — [record](docs/runpod-phase1-verification-2026-10-09.md) |
+| **2 — Larger Qwen model** | Run a 27B-class Qwen model on **A100 80GB**, advance multimodal functionality | The maintainer reports that the target Qwen 27B model ran on A100 80GB. The existing Colab/Gradio app supports chat, vision, image generation/editing and several supporting tools. | **Model launch reported; integrated workflow and Q8/VRAM benchmark still need documented GPU evidence.** |
+| **3 — Cross-model benchmarking** | Evaluate GLM Original, Uncensored and Security-specific variants with single-job RunPod execution | Architecture, model candidates, evaluation criteria and cost controls documented in English and Japanese. | **Designed only — no Phase 3 implementation or GPU runs yet.** [Design EN](docs/phase3-glm-evaluation.md) / [JA](docs/phase3-glm-evaluation.ja.md) |
 
-## Phase 3: GLM three-track evaluation — design
-
-[Full English architecture and detailed design](docs/phase3-glm-evaluation.md) · [日本語の全体・詳細設計](docs/phase3-glm-evaluation.ja.md)
-
-- **Original:** official Z.ai `GLM-5.3-Flash`.
-- **Uncensored:** selected `huihui-ai/Huihui-GLM-5.3-Flash-abliterated-GGUF` based on community engagement and GGUF practicality.
-- **Security-specific:** `dealignai/GLM-5.3-CYBERSECURITY-FP8` (full-size GLM-5.3, **not** Flash; evaluated with separate cost and fairness caveats).
-- RunPod on-demand, authenticated job API, persist results, **terminate on completion with a hard 3-hour limit**. Model-fit, quantization, CPU offload, GPU fallback, benchmark protocol, cost and failure cleanup are detailed in the design.
-- **Phase 3 is designed only; implementation and GPU testing have not been performed.** Existing Phase 1 evidence and Phase 2 runtime status remain documented separately.
-
-## Runtime options
-
-This repository contains the Qwen model and Gradio UI application. The existing Colab notebooks remain available below. RunPod lifecycle and Open WebUI integration are maintained separately in [qwen-runpod-operations](https://github.com/moruku36/qwen-runpod-operations). A separate minimal Phase1 trial displayed one Qwen2.5-1.5B-Instruct reply through Open WebUI on October 9, 2026; see the [verification record (Japanese)](docs/runpod-phase1-verification-2026-10-09.md). This does not validate the integrated launcher or this application's full RunPod workflow; those remain under validation. CPU and mock checks alone do not establish a successful paid RunPod session.
-
-### Current connection diagram (Phase1 verified)
-
-This is the minimal connection path verified on October 9, 2026. The trial Pod was stopped and deleted after one reply; it is not an always-on deployment.
+## System overview
 
 ```mermaid
 flowchart LR
-    subgraph Windows["Windows"]
-        UI["Open WebUI"]
-    end
-    subgraph Trial["RunPod trial Pod — deleted"]
-        Proxy["HTTPS proxy"]
-        Guard["guard<br/>Authentication before every route"]
-        Server["vLLM<br/>Loopback only"]
-        Model["Qwen2.5-1.5B-Instruct<br/>RTX PRO 4000 · 24GB · 1 GPU"]
-        Proxy <--> Guard <--> Server <--> Model
-    end
-    UI <-->|Authenticated HTTPS| Proxy
+    User["Local user / Open WebUI"] <-->|"Authenticated HTTPS"| Remote["RunPod inference API"]
+    Remote --> Model["Open-weight model<br/>Qwen (Phase 1–2) / GLM (Phase 3 planned)"]
+    User --> Job["Phase 3 job runner (planned)"]
+    Job --> Remote
+    Job --> Results["Metrics and review artifacts<br/>persist before Pod termination"]
 ```
 
-The guard allows only model listing and chat completions. The reply `Connected successfully.` was displayed in Open WebUI. The [Windows credential startup integration](docs/runpod-credman-startup.ja.md) is merged and disabled by default. Its 55 mock checks and CI passed; startup with real Windows credentials and a GPU remains unverified. Phase2 (A100, larger models, multimodal use, and a five-role broker) remains a plan; the broker is not implemented. See the [Phase1 verification record](docs/runpod-phase1-verification-2026-10-09.md) for the configuration, limitations, and cleanup result. Edit this Mermaid block when the verified path changes.
+**What exists today:** Qwen chat/vision through `llama.cpp`, Qwen-Image via `diffusers`, Gradio UI, web search, read-only GitHub research, PDF/short-video understanding, speech input and optional speech output. See [technical guide](TECHNICAL.md) and [architecture](docs/architecture.md). This application is distinct from the Phase 1 minimal RunPod demonstration and the planned Phase 3 orchestrator.
 
-## Start in Colab
+**What Phase 3 will test:** official [GLM-5.3-Flash](https://huggingface.co/zai-org/GLM-5.3-Flash), [Huihui abliterated Flash GGUF](https://huggingface.co/huihui-ai/Huihui-GLM-5.3-Flash-abliterated-GGUF), and [dealignai GLM-5.3 cybersecurity FP8](https://huggingface.co/dealignai/GLM-5.3-CYBERSECURITY-FP8). The cybersecurity variant is based on full GLM-5.3, not Flash; comparisons must distinguish model scale, quantization, and safety tuning. The future job API will store output before stopping the Pod, with a **3-hour maximum runtime**, not a fixed billing session.
 
-For the lightweight Q8 chat/vision workflow on an A100 80GB, open the
-[chat-only notebook](Qwen-Q8-Chat-Colab.ipynb). It keeps web search and CPU speech
-recognition while omitting image generation and editing. See the
-[Q8-first roadmap](docs/chat-only-roadmap.md) for validation status and the later
-BF16 comparison. The original notebook below remains the full multimodal workflow.
+## Try the existing Qwen application
 
-1. Open the [Colab notebook](https://colab.research.google.com/github/moruku36/qwen-multimodal/blob/main/Qwen-Multimodal-Colab.ipynb). **An A100 runtime is required** (A100 80GB recommended); L4 and A100 40GB are currently not supported.
-2. Optionally add `HF_TOKEN` and search-provider keys through Colab Secrets.
-3. Run cells 1–4 in order and open the resulting Gradio link.
+- [Chat-only Colab notebook](Qwen-Q8-Chat-Colab.ipynb) — A100 80GB target, no image generation.
+- [Full multimodal Colab notebook](https://colab.research.google.com/github/moruku36/open-llm-multimodal-lab/blob/main/Qwen-Multimodal-Colab.ipynb) — chat/vision and image workflow; requires an A100-class runtime. Set `HF_TOKEN` and optional web-search keys in Colab Secrets; run cells 1–4.
+- Local mock UI (no GPU): `pip install -r requirements-dev.txt`, then `PYTHONPATH=src python -m qmc --mock`. Mock tests are not proof of GPU compatibility.
 
-Qwen3.8-27B Q8_K_L runs through llama.cpp for chat and vision with the official mmproj; Qwen-Image-2.1 runs through diffusers for image generation and editing. The implementation lives in `src/qmc/`.
+The existing app and its `src/qmc/` package keep their Qwen-specific names for backward compatibility. [RunPod operations](https://github.com/moruku36/qwen-runpod-operations) are managed separately.
 
-## Use
+## Documentation
 
-Attach images, PDFs, short videos, or audio with the plus control. Use the microphone for speech input. Tools, generation settings, history, masks, and image versions are in the sidebar. GitHub URLs trigger a read-only research agent, bounded to a configurable step count; it does not write or execute repository code.
-
-If Google Drive is mounted, history and images are stored under `MyDrive/qwen-multimodal-colab/data/`; otherwise runtime storage is temporary.
-
-## Limits and verification
-
-| Area | Documented default limit |
+| Topic | Link |
 | --- | --- |
-| PDF | First 6 pages; 30MB |
-| Video | 30 seconds; 80MB; up to 8 frames; no video generation |
-| Image editing | Up to 10 references; masks do not guarantee unchanged outside pixels |
-| Speech input | Japanese small faster-whisper model loaded on CPU as needed |
-| Readout | Off by default; edge-tts sends reply text to an external service |
-| GPU evidence | Earlier A100 core flows used Q4_K_M; Q8_K_L and recent features still need GPU measurement |
+| Phase 1 connection evidence | [Trial report](docs/runpod-phase1-verification-2026-10-09.md) |
+| Phase 2 Q8 plan and measurement limitations | [Q8 roadmap](docs/chat-only-roadmap.md), [VRAM evidence](docs/vram-measurements.md) |
+| Phase 3 overall + detailed design | [English](docs/phase3-glm-evaluation.md), [日本語](docs/phase3-glm-evaluation.ja.md) |
+| Existing application's architecture and operations | [Architecture](docs/architecture.md), [Technical guide](TECHNICAL.md), [Japanese guide](README.ja.md) |
 
-## Local mock mode
+### Limitations and responsibilities
+GPU costs, system RAM, weight storage, and download time vary substantially with model format and RunPod instance. Do not treat a successful model load as a completed benchmark. PDF input is limited to the first six pages (30MB); videos to 30 seconds / 8 frames. GitHub exploration is read-only. Protect access credentials and review generated code before applying it. Source code is MIT-licensed; **model weights carry their own licenses**.
 
-```bash
-pip install -r requirements-dev.txt
-PYTHONPATH=src python -m qmc --mock
-```
-
-`SHARE=True` creates a public URL; configure authentication through Colab Secrets when sharing. Web search sends queries to external services. Code is MIT-licensed; model weights have separate terms, including the documented non-commercial research terms for Qwen-Image-2.1.
-
-[Technical guide](TECHNICAL.md) · [Architecture](docs/architecture.md) · [VRAM measurements](docs/vram-measurements.md). The Japanese guide retains the full operating, troubleshooting, and improvement notes.
-
-
-## Contents
-
-- [TECHNICAL.md](TECHNICAL.md)
-- [data/](data)
-- [docs/](docs)
-- [scripts/](scripts)
-- [src/](src)
-- [tests/](tests)
-
-## Detailed documentation
-
-The [Japanese guide](README.ja.md) retains the complete original setup instructions, configuration, examples, project status, and limitations. Supporting documents keep their existing language.
-
-## Image generation time and Colab units
-
-Image controls now start at the configured **1024 band / 40 steps on A100 / one image** instead of silently forcing 2048/50. The visible **legacy-quality 2048/50** preset remains available; **draft 768/20** trades detail and fidelity for less work. No GPU speedup or CU savings have been measured. Progress shows per-image elapsed time, and completion separates preparation from image processing. See the [performance review and verification limits](docs/image-performance.md). Stop/unload does not end the Colab runtime; use the session shutdown control when finished.
+Updated: 2026-10-13.
