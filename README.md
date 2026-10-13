@@ -1,8 +1,21 @@
-# Qwen Multimodal
+# Open LLM Multimodal Lab
 
 [English](README.md) | [日本語](README.ja.md)
 
 A personal Gradio chat application with Qwen chat/vision and image generation/editing, web search, read-only GitHub research, PDFs, short videos, speech input, and optional readout. It requires an NVIDIA A100 (80GB recommended) with Qwen3.8-27B Q8_K_L; L4 and A100 40GB are not supported at the moment. That quantization change still needs GPU measurement.
+
+
+> **Project scope update (2026-10-13):** this project is expanding beyond Qwen to evaluate multiple open-weight LLMs. The GitHub URL slug is still `qwen-multimodal` pending an administrative rename. The existing Qwen code and notebooks are preserved.
+
+## Phase 3: GLM three-track evaluation — design
+
+[Full English architecture and detailed design](docs/phase3-glm-evaluation.md) · [日本語の全体・詳細設計](docs/phase3-glm-evaluation.ja.md)
+
+- **Original:** official Z.ai `GLM-5.3-Flash`.
+- **Uncensored:** selected `huihui-ai/Huihui-GLM-5.3-Flash-abliterated-GGUF` based on community engagement and GGUF practicality.
+- **Security-specific:** `dealignai/GLM-5.3-CYBERSECURITY-FP8` (full-size GLM-5.3, **not** Flash; evaluated with separate cost and fairness caveats).
+- RunPod on-demand, authenticated job API, persist results, **terminate on completion with a hard 3-hour limit**. Model-fit, quantization, CPU offload, GPU fallback, benchmark protocol, cost and failure cleanup are detailed in the design.
+- **Phase 3 is designed only; implementation and GPU testing have not been performed.** Existing Phase 1 evidence and Phase 2 runtime status remain documented separately.
 
 ## Runtime options
 
