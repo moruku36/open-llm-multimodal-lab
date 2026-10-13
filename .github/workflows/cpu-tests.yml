@@ -22,7 +22,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          repository: moruku36/ai-engineering-factory
+          repository: moruku36/ai-governance-control
           ref: 31ad9d3b9289410bdff04e6ddbcaf5a9820f2da1
           path: factory
           persist-credentials: false
