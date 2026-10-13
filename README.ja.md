@@ -1,4 +1,4 @@
-# Qwen Multimodal
+# Open LLM Multimodal Lab
 
 [English](README.md) | [日本語](README.ja.md)
 
@@ -11,6 +11,19 @@ Qwenの会話・画像理解・画像生成編集、Web検索、GitHub読み取�
 個人用の AI チャット画面です。既存の Google Colab 起動手順も引き続き使えます。**会話・画像の理解と生成・PDFや短い動画の読解・音声入力**を一つの画面で使えます。会話と画像は Google Drive に保存できます。
 
 > **English:** A personal Gradio chat app for Google Colab, designed for an A100 80GB. Qwen3.8-27B (GGUF Q8_K_L via llama.cpp) handles chat and vision; Qwen-Image-2.1 handles image creation and edits. It also supports web search, appearance lookup for named characters before image generation, a read-only research agent for GitHub repositories, PDFs, short videos, speech input and optional readout. Earlier core flows were tested on an A100 (with the previous Q4_K_M chat model); recent features and the Q8_K_L switch have CPU tests and still need Colab GPU verification.
+
+
+> **プロジェクト拡張（2026-10-13）**：Qwen単体のマルチモーダル実験から、複数のオープンウェイトLLMを比較する研究プロジェクトへ拡張します。GitHubリポジトリのURL名はまだ `qwen-multimodal` です。従来のQwenコード・ノートブックは維持します。
+
+## Phase 3：GLMモデル比較（全体設計・詳細設計）
+
+**[Phase 3 日本語設計書](docs/phase3-glm-evaluation.ja.md)** · [English design](docs/phase3-glm-evaluation.md)
+
+- **A Original**：Z.ai公式 `GLM-5.3-Flash`
+- **B Uncensored**：コミュニティの利用実績とGGUF対応を踏まえ `huihui-ai/Huihui-GLM-5.3-Flash-abliterated-GGUF` を採用
+- **C Security-specific**：`dealignai/GLM-5.3-CYBERSECURITY-FP8`（Flashではなく大型GLM-5.3。費用・比較条件は別枠）
+- RunPodを必要時に起動し、認証付きJob APIでレビュー→成果物保存→**完了後即停止・最長3時間**。量子化、CPUオフロード、GPU選定、計測項目、比較公平性、失敗時の終了処理は設計書に明記しています。
+- **Phase 3は設計済み・未実装・未GPU検証**。既存Phase 1記録とPhase 2の実機測定状況は別々に管理します。
 
 ## 実行環境
 
