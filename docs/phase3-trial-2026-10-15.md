@@ -2,6 +2,8 @@
 
 [日本語](phase3-trial-2026-10-15.ja.md) / design: [phase3-glm-evaluation.md](phase3-glm-evaluation.md)
 
+> **Closure note (2026-10-15):** The owner has ended this RunPod evaluation; no restart is planned or newly authorized. The improvement proposals in section 6 are retained as **lessons, not a resumed plan**. See the [final retrospective](runpod-retrospective-2026-10-15.md).
+
 ## Outcome
 
 - **P3-0 (preparation) done**: model registry, pinned revisions, llama.cpp image support check, evaluation set and scorer (verified against a mock server).

@@ -1,6 +1,8 @@
 # Phase 3 — Open LLM model-variant evaluation (2026-10-13)
 
-Status: **DESIGN ONLY — not implemented or GPU-verified.** This phase extends the existing Qwen multimodal experiments; it does not replace the existing application. Proposed project display name: **Open LLM Multimodal Lab** (`open-llm-multimodal-lab`). The GitHub repository slug remains `qwen-multimodal` until separately renamed in GitHub Settings.
+> **CURRENT STATUS (2026-10-15):** The owner has **ended the RunPod evaluation**; no restart is planned or newly authorized. P3-0 preparation is done; track A was attempted and aborted during the model-weights download; B was not run; C was cost-estimated only. There are **no model inference outputs or benchmark results** (mock-scorer numbers are test fixtures, not GLM measurements). Everything below is the **historical 2026-10-13 design proposal**, retained as a historical design reference with current dated status notices. See the [trial record](phase3-trial-2026-10-15.md) and [final retrospective](runpod-retrospective-2026-10-15.md).
+
+Historical status at 2026-10-13: **DESIGN ONLY — not implemented or GPU-verified.** This phase extends the existing Qwen multimodal experiments; it does not replace the existing application. Project display name: **Open LLM Multimodal Lab**; the repository has since been renamed to `open-llm-multimodal-lab`.
 
 [日本語](phase3-glm-evaluation.ja.md)
 
@@ -64,4 +66,4 @@ The orchestration/API design belongs here; actual Pod lifecycle and credentials 
 ### Operational guardrails
 Default `max_runtime_seconds=10800` is a **ceiling**, not the target duration. Terminate as soon as results are durably uploaded. Model caching may reduce future download time but stopped Pods/volumes can still incur storage charges. API gateway and content-level application controls remain in place irrespective of the model's refusal-tuning behavior.
 
-**Not done yet:** implementation, provisioned GPU, benchmarks, repo slug rename. This document is a design and evaluation plan.
+**Not done (final status, 2026-10-15):** the job API/orchestrator was not implemented; no benchmarks were run. P3-0 is done; A was attempted on a GPU Pod but aborted before the model weights finished downloading; B was not run; C was only cost-estimated. The evaluation has ended, with no benchmark results and no planned restart. The repository rename has been completed (`open-llm-multimodal-lab`). This document remains a historical design proposal, not a plan.
