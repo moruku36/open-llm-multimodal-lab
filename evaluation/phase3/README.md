@@ -1,6 +1,8 @@
 # Phase 3 evaluation set (T1–T4)
 
-Self-authored, small evaluation set for comparing GLM-5.3-Flash variants. See [the trial record](../../docs/phase3-trial-2026-10-15.md).
+> **Status (2026-10-15): frozen fixtures and mock-scorer results only.** The owner has ended the real RunPod evaluation; no GLM model outputs or benchmark results exist, and no restart is planned. The commands below are kept as **archival examples**, not an active procedure. See the [final retrospective](../../docs/runpod-retrospective-2026-10-15.md).
+
+Self-authored, small evaluation set designed for comparing GLM-5.3-Flash variants. See [the trial record](../../docs/phase3-trial-2026-10-15.md).
 
 | File | Purpose |
 |---|---|

@@ -2,30 +2,32 @@
 
 [English](README.md) | [日本語](README.ja.md)
 
-**オープンウェイトLLMをGPU上で動かし、マルチモーダル処理・コードレビュー・防御的セキュリティ分析を比較する実験プロジェクトです。** Qwenのチャット・画像理解アプリから始まり、RunPodを使ったGLMなど複数モデルの比較検証へ対象を広げています。商用運用済みのサービスではなく、設計と実測を積み上げる研究用リポジトリです。
+**オープンウェイトLLMをGPU上で動かし、マルチモーダル処理・コードレビュー・防御的セキュリティ分析を比較する実験プロジェクトです。** Qwenのチャット・画像理解アプリから始まり、RunPodのオンデマンド推論を試しました。**オーナーはRunPod検証を終了しました（2026-10-15）。[最終振り返り](docs/runpod-retrospective-2026-10-15.ja.md)を参照してください。** Qwenアプリと過去の報告書は残しています。商用運用済みのサービスではなく、設計と実測を積み上げる研究用リポジトリです。
 
 ## どこまでできた？
 
 | Phase | 目標 | 実施した内容 | 状態 |
 | --- | --- | --- | --- |
 | **1：GPU接続** | RunPodの推論APIとローカルOpen WebUIを接続 | **2026-10-09** にRTX PRO 4000（24GB）上のQwen2.5-1.5B-Instructから、認証付きHTTPS経由で `Connected successfully.` を受信。検証後Podを削除。 | **最小構成で実証済み** [検証記録](docs/runpod-phase1-verification-2026-10-09.md) |
-| **2：大型Qwen** | **A100 80GB** でQwen 27B級を起動し、マルチモーダル化 | **2026-10-15** にRunPodのA100 SXM 80GB上の `Qwen/Qwen3.8-27B`（BF16、vLLM）へOpen WebUIから認証付きHTTPSで1回質問し、指示どおりの回答を受信（875秒・約$0.44）。検証後Podを削除。Colab/Gradioによる会話・画像理解・画像生成/編集アプリも整備済み。 | **1回答の接続試験で実証済み** [検証記録](docs/runpod-phase2-verification-2026-10-15.ja.md)。品質・速度、manual-hook経路、Q8_K_LのVRAM・速度計測は未確認 |
-| **3：モデル比較** | GLMのOriginal / Uncensored / Security-specificを同一課題で比較 | 設計を整理。**2026-10-15** にモデル台帳（revision固定）・llama.cppイメージの対応確認・評価セットと隔離採点器（模擬サーバーで検証）を準備。H200 SXMでのAは**重みのダウンロード速度で中止**（約23分・約$2.04、出力0件）。Bは未実施、Cは費用試算のみ。 | **準備完了・モデル結果はまだなし** [試行記録](docs/phase3-trial-2026-10-15.ja.md) / [日本語設計](docs/phase3-glm-evaluation.ja.md) |
+| **2：大型Qwen** | **A100 80GB** でQwen 27B級を起動し、マルチモーダル化 | **2026-10-15** にRunPodのA100 SXM 80GB上の `Qwen/Qwen3.8-27B`（BF16、vLLM）へOpen WebUIから認証付きHTTPSで1回質問し、指示どおりの回答を受信（875秒はデプロイ開始からStopまでの計測区間で、応答遅延やGPU稼働時間のみではありません。約$0.44は試算）。検証後Podを削除。Colab/Gradioによる会話・画像理解・画像生成/編集アプリも整備済み。 | **1回答の接続試験で実証済み** [検証記録](docs/runpod-phase2-verification-2026-10-15.ja.md)。品質・速度、manual-hook経路、Q8_K_LのVRAM・速度計測は未確認 |
+| **3：モデル比較**（過去の計画） | GLMのOriginal / Uncensored / Security-specificを同一課題で比較する計画 | **今回の検証は途中で終了、Aは中止。** **2026-10-15** に台帳（revision固定）・イメージ互換性・評価セットと模擬採点を準備。H200 SXMでのAは重みの取得中に停止（1381.7秒・約$2.04の試算）。Bは未実施、Cは費用試算のみ。 | **モデル結果なし**（模擬採点はフィクスチャでGLMの実測ではない）[試行記録](docs/phase3-trial-2026-10-15.ja.md) / [日本語設計](docs/phase3-glm-evaluation.ja.md) |
+
+**最終振り返り：** [日本語](docs/runpod-retrospective-2026-10-15.ja.md) / [English](docs/runpod-retrospective-2026-10-15.md)。オーナーの方向性は、通常のコード・文書レビュー用の運用候補として**MiMo-V2.6-Pro API**を検討することです。**検証済みの導入ではなく**、APIアカウント・呼び出し・結果は本プロジェクトでは検証されていません。機密情報を送る前にAPIのプライバシー・保持条件を確認してください。
 
 ## システム概要
 
 ```mermaid
 flowchart LR
     U["ローカルPC / Open WebUI"] <-->|"認証付きHTTPS"| API["RunPod 推論API"]
-    API --> M["オープンウェイトモデル<br/>Qwen: Phase 1・2 / GLM: Phase 3計画"]
-    U --> J["ジョブ制御 (Phase 3計画)"]
-    J --> API
-    J --> R["検証結果・費用・ログ保存<br/>完了後Podを停止"]
+    API --> M["オープンウェイトモデル<br/>Qwen: Phase 1・2 / GLM: Phase 3過去の設計"]
+    U -.-> J["ジョブ制御 (Phase 3過去の設計・未実装)"]
+    J -.-> API
+    J -.-> R["検証結果・費用・ログ保存<br/>完了後Podを停止"]
 ```
 
-**現在できること：** Qwenによる対話・画像理解、画像生成/編集、Web検索、GitHubの読み取り専用調査、PDF/短い動画の解析、音声入力・読み上げ。これらは既存の`src/qmc/`とGradioを使う機能です。Phase 1の最小接続テストと、今後のPhase 3ジョブ実行は別の構成です。
+**現在できること：** Qwenによる対話・画像理解、画像生成/編集、Web検索、GitHubの読み取り専用調査、PDF/短い動画の解析、音声入力・読み上げ。これらは既存の`src/qmc/`とGradioを使う機能です。Phase 1の最小接続テストと、過去のPhase 3ジョブ設計は別の構成です。既存のQwenアプリは引き続き文書化・利用可能で、RunPod検証は終了しています。
 
-### Phase 3で比較するモデル
+### 過去のPhase 3設計で比較予定だったモデル（参考として保存・再開予定なし）
 
 | 系列 | モデル | 検証内容 |
 | --- | --- | --- |
@@ -33,7 +35,7 @@ flowchart LR
 | Uncensored | [Huihui GLM-5.3-Flash Abliterated GGUF](https://huggingface.co/huihui-ai/Huihui-GLM-5.3-Flash-abliterated-GGUF) | 拒否率・実用精度への影響 |
 | Security-specific | [dealignai GLM-5.3-CYBERSECURITY-FP8](https://huggingface.co/dealignai/GLM-5.3-CYBERSECURITY-FP8) | 脆弱性発見・誤検知・費用。**フルGLM-5.3でありFlashとは規模が異なる** |
 
-認証付きジョブAPIでタスクを投入し、結果を保存してからPodを停止します。**最大3時間は停止上限**で、常時稼働も3時間の固定稼働も意図しません。詳細：[Phase 3 全体・詳細設計](docs/phase3-glm-evaluation.ja.md)。
+設計上は、認証付きジョブAPIでタスクを投入し、結果を保存してからPodを停止する想定でした（未実装）。**最大3時間は停止上限**で、常時稼働も3時間の固定稼働も意図しません。詳細：[Phase 3 全体・詳細設計](docs/phase3-glm-evaluation.ja.md)。
 
 ## 試してみる
 
@@ -47,6 +49,7 @@ flowchart LR
 
 | 内容 | リンク |
 | --- | --- |
+| 最終振り返り（2026-10-15） | [日本語](docs/runpod-retrospective-2026-10-15.ja.md) / [English](docs/runpod-retrospective-2026-10-15.md) |
 | Phase 1接続検証 | [2026-10-09の記録](docs/runpod-phase1-verification-2026-10-09.md) |
 | Phase 2 Qwen3.8-27B接続検証・反省点・Phase 3への注意点 | [日本語](docs/runpod-phase2-verification-2026-10-15.ja.md) / [English](docs/runpod-phase2-verification-2026-10-15.md) |
 | Phase 2 Q8計画・VRAM計測 | [ロードマップ](docs/chat-only-roadmap.md) / [測定記録](docs/vram-measurements.md) |

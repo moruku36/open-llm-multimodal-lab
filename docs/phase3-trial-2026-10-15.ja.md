@@ -2,6 +2,8 @@
 
 [English](phase3-trial-2026-10-15.md) ／ 設計：[phase3-glm-evaluation.ja.md](phase3-glm-evaluation.ja.md)
 
+> **終了の注記（2026-10-15）：** オーナーは今回のRunPod検証を終了しました。再開の予定も新たな承認もありません。第6節の改善案は**教訓として残すもので、再開計画ではありません**。[最終振り返り](runpod-retrospective-2026-10-15.ja.md)を参照。
+
 ## 結論
 
 - **P3-0（準備）は完了**：モデル台帳、revision 固定、llama.cpp イメージの対応確認、評価セットと採点器（模擬サーバーで検証済み）。
