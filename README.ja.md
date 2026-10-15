@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | **1：GPU接続** | RunPodの推論APIとローカルOpen WebUIを接続 | **2026-10-09** にRTX PRO 4000（24GB）上のQwen2.5-1.5B-Instructから、認証付きHTTPS経由で `Connected successfully.` を受信。検証後Podを削除。 | **最小構成で実証済み** [検証記録](docs/runpod-phase1-verification-2026-10-09.md) |
 | **2：大型Qwen** | **A100 80GB** でQwen 27B級を起動し、マルチモーダル化 | **2026-10-15** にRunPodのA100 SXM 80GB上の `Qwen/Qwen3.8-27B`（BF16、vLLM）へOpen WebUIから認証付きHTTPSで1回質問し、指示どおりの回答を受信（875秒・約$0.44）。検証後Podを削除。Colab/Gradioによる会話・画像理解・画像生成/編集アプリも整備済み。 | **1回答の接続試験で実証済み** [検証記録](docs/runpod-phase2-verification-2026-10-15.ja.md)。品質・速度、manual-hook経路、Q8_K_LのVRAM・速度計測は未確認 |
-| **3：モデル比較** | GLMのOriginal / Uncensored / Security-specificを同一課題で比較 | GPU・量子化・ジョブAPI・停止制御・評価指標・費用管理を全体/詳細設計へ整理。 | **設計完了・実装とGPU実測は未着手** [日本語設計](docs/phase3-glm-evaluation.ja.md) |
+| **3：モデル比較** | GLMのOriginal / Uncensored / Security-specificを同一課題で比較 | 設計を整理。**2026-10-15** にモデル台帳（revision固定）・llama.cppイメージの対応確認・評価セットと隔離採点器（模擬サーバーで検証）を準備。H200 SXMでのAは**重みのダウンロード速度で中止**（約23分・約$2.04、出力0件）。Bは未実施、Cは費用試算のみ。 | **準備完了・モデル結果はまだなし** [試行記録](docs/phase3-trial-2026-10-15.ja.md) / [日本語設計](docs/phase3-glm-evaluation.ja.md) |
 
 ## システム概要
 
@@ -51,6 +51,7 @@ flowchart LR
 | Phase 2 Qwen3.8-27B接続検証・反省点・Phase 3への注意点 | [日本語](docs/runpod-phase2-verification-2026-10-15.ja.md) / [English](docs/runpod-phase2-verification-2026-10-15.md) |
 | Phase 2 Q8計画・VRAM計測 | [ロードマップ](docs/chat-only-roadmap.md) / [測定記録](docs/vram-measurements.md) |
 | Phase 3全体・詳細設計 | [日本語](docs/phase3-glm-evaluation.ja.md) / [English](docs/phase3-glm-evaluation.md) |
+| Phase 3試行記録（2026-10-15）・評価セット | [日本語](docs/phase3-trial-2026-10-15.ja.md) / [English](docs/phase3-trial-2026-10-15.md) / [evaluation/phase3](evaluation/phase3/) |
 | 既存アプリの構成・実装・使い方 | [アーキテクチャ](docs/architecture.md) / [技術ガイド](TECHNICAL.md) |
 
 **制約：** PDFは最初の6ページ・30MB、動画は30秒・最大8フレーム。OSSの調査エージェントは読み取り専用。GPU要件・ホストRAM・料金はモデルと量子化形式で異なります。生成したコードは適用前に人手で確認してください。ソースコードはMIT、モデルの重みは各モデル固有のライセンスに従います。

@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | **1 — Connectivity** | Connect a remote GPU model to Open WebUI | On **2026-10-09**, a Qwen2.5-1.5B-Instruct model on a RunPod RTX PRO 4000 (24GB) returned `Connected successfully.` through authenticated HTTPS; the test Pod was deleted afterwards. | **Verified minimal smoke test** — [record](docs/runpod-phase1-verification-2026-10-09.md) |
 | **2 — Larger Qwen model** | Run a 27B-class Qwen model on **A100 80GB**, advance multimodal functionality | On **2026-10-15**, `Qwen/Qwen3.8-27B` (BF16, vLLM) on a RunPod A100 SXM 80GB answered one Open WebUI request through authenticated HTTPS (875 s, ~$0.44); the Pod was deleted afterwards. The existing Colab/Gradio app supports chat, vision, image generation/editing and several supporting tools. | **Verified one-reply connection test** — [record](docs/runpod-phase2-verification-2026-10-15.md). Quality/speed, the manual-hook route and the Q8/VRAM benchmark are not yet evidenced. |
-| **3 — Cross-model benchmarking** | Evaluate GLM Original, Uncensored and Security-specific variants with single-job RunPod execution | Architecture, model candidates, evaluation criteria and cost controls documented in English and Japanese. | **Designed only — no Phase 3 implementation or GPU runs yet.** [Design EN](docs/phase3-glm-evaluation.md) / [JA](docs/phase3-glm-evaluation.ja.md) |
+| **3 — Cross-model benchmarking** | Evaluate GLM Original, Uncensored and Security-specific variants with single-job RunPod execution | Design documented. On **2026-10-15**: model registry with pinned revisions, llama.cpp image support verified, evaluation set + sandboxed scorer verified on a mock. Track A run on an H200 SXM was **aborted by weight-download speed** (~23 min, ~$2.04, zero outputs); B not run; C cost-estimated only. | **Prepared; no model results yet.** [Trial record](docs/phase3-trial-2026-10-15.md) / [Design EN](docs/phase3-glm-evaluation.md) / [JA](docs/phase3-glm-evaluation.ja.md) |
 
 ## System overview
 
@@ -43,6 +43,7 @@ The existing app and its `src/qmc/` package keep their Qwen-specific names for b
 | Phase 2 Qwen3.8-27B connection evidence, lessons and Phase 3 cautions | [English](docs/runpod-phase2-verification-2026-10-15.md), [日本語](docs/runpod-phase2-verification-2026-10-15.ja.md) |
 | Phase 2 Q8 plan and measurement limitations | [Q8 roadmap](docs/chat-only-roadmap.md), [VRAM evidence](docs/vram-measurements.md) |
 | Phase 3 overall + detailed design | [English](docs/phase3-glm-evaluation.md), [日本語](docs/phase3-glm-evaluation.ja.md) |
+| Phase 3 trial record (2026-10-15) and evaluation set | [English](docs/phase3-trial-2026-10-15.md), [日本語](docs/phase3-trial-2026-10-15.ja.md), [evaluation/phase3](evaluation/phase3/) |
 | Existing application's architecture and operations | [Architecture](docs/architecture.md), [Technical guide](TECHNICAL.md), [Japanese guide](README.ja.md) |
 
 ### Limitations and responsibilities

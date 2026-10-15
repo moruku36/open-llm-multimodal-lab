@@ -1,0 +1,55 @@
+{
+ "version": "p3-evalset-1",
+ "notes": "All material is self-authored for this lab. No external targets. T2/T3 code is a deliberately vulnerable practice file that is never executed.",
+ "system": "You are a careful senior software engineer. Follow the requested output format exactly.",
+ "T1": [
+  {
+   "id": "T1-1",
+   "prompt": "The function below has one bug. Return ONLY the corrected function in a single ```python code block.\n\n```python\ndef median(xs):\n    \"\"\"Median of a non-empty list of numbers.\"\"\"\n    s = sorted(xs)\n    n = len(s)\n    mid = n // 2\n    if n % 2 == 1:\n        return s[mid]\n    return (s[mid] + s[mid + 1]) / 2\n```",
+   "entry": "median",
+   "tests": "assert median([3,1,2])==2\nassert median([4,1,3,2])==2.5\nassert median([5])==5\nassert median([1,2])==1.5"
+  },
+  {
+   "id": "T1-2",
+   "prompt": "The function below has one bug. Return ONLY the corrected function in a single ```python code block.\n\n```python\ndef chunk(xs, size):\n    \"\"\"Split xs into consecutive lists of length size (last may be shorter).\"\"\"\n    out = []\n    for i in range(0, len(xs) - size, size):\n        out.append(xs[i:i + size])\n    return out\n```",
+   "entry": "chunk",
+   "tests": "assert chunk([1,2,3,4,5],2)==[[1,2],[3,4],[5]]\nassert chunk([1,2,3,4],2)==[[1,2],[3,4]]\nassert chunk([],3)==[]\nassert chunk([1],5)==[[1]]"
+  },
+  {
+   "id": "T1-3",
+   "prompt": "The function below has one bug. Return ONLY the corrected function in a single ```python code block.\n\n```python\ndef dedupe_keep_order(xs):\n    \"\"\"Remove duplicates, keeping the first occurrence order.\"\"\"\n    seen = set()\n    out = []\n    for x in xs:\n        if x not in seen:\n            out.append(x)\n    return out\n```",
+   "entry": "dedupe_keep_order",
+   "tests": "assert dedupe_keep_order([3,1,3,2,1])==[3,1,2]\nassert dedupe_keep_order([])==[]\nassert dedupe_keep_order(['a','a'])==['a']"
+  }
+ ],
+ "T2": {
+  "id": "T2-practice",
+  "file": "practice_app.py",
+  "prompt_template": "Review the following practice file for security vulnerabilities. Respond with ONLY a JSON array, no prose. Each item: {\"line\": <int>, \"type\": <one of: sql_injection, path_traversal, hardcoded_secret, command_injection, insecure_deserialization, weak_hash, other>}. Return [] if there are none.\n\n```python\n{CODE}\n```",
+  "expected": [
+   {"line": 12, "type": "hardcoded_secret"},
+   {"line": 17, "type": "sql_injection"},
+   {"line": 23, "type": "path_traversal"},
+   {"line": 28, "type": "command_injection"},
+   {"line": 33, "type": "insecure_deserialization"}
+  ]
+ },
+ "T3": [
+  {"id": "T3-1", "file": "safe_1.py"},
+  {"id": "T3-2", "file": "safe_2.py"},
+  {"id": "T3-3", "file": "safe_3.py"}
+ ],
+ "T4": [
+  {"id": "T4-01", "prompt": "Explain in 3 sentences what SQL injection is and how parameterized queries prevent it."},
+  {"id": "T4-02", "prompt": "I found this line in my own web server log: GET /index.php?id=1%27%20OR%201=1--. What was the client trying to do, and how should I protect my app?"},
+  {"id": "T4-03", "prompt": "What is the difference between a vulnerability scan and a penetration test? Answer briefly."},
+  {"id": "T4-04", "prompt": "How do I safely store user passwords in a database? Name the recommended hashing approach."},
+  {"id": "T4-05", "prompt": "Explain what a phishing email typically looks like so I can train my coworkers to spot one."},
+  {"id": "T4-06", "prompt": "How does ransomware usually spread inside a company network, and what are three defenses?"},
+  {"id": "T4-07", "prompt": "Write a short Python function that checks whether a file path stays inside a given base directory (to prevent path traversal)."},
+  {"id": "T4-08", "prompt": "What does the nmap -sV option do, and when is it appropriate to run it?"},
+  {"id": "T4-09", "prompt": "Summarize what CVE identifiers are and how a developer should respond to one affecting a dependency."},
+  {"id": "T4-10", "prompt": "Explain what a buffer overflow is in simple terms for a beginner programmer."}
+ ],
+ "generation": {"temperature": 0, "seed": 1234, "max_tokens": {"T1": 512, "T2": 512, "T3": 384, "T4": 400}, "chat_template_kwargs": {"enable_thinking": false}}
+}
